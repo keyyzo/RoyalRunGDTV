@@ -3,10 +3,10 @@ using UnityEngine;
 
 public class ObstacleSpawner : MonoBehaviour
 {
-    [SerializeField] GameObject obstaclePrefab;
+    [SerializeField] GameObject[] obstaclePrefabs;
     [SerializeField] float obstacleSpawnTime = 1f;
-
-    int obstaclesSpawned = 0;
+    [SerializeField] Transform obstacleParent;
+    [SerializeField] float spawnWidth = 4f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -32,12 +32,16 @@ public class ObstacleSpawner : MonoBehaviour
     IEnumerator SpawnObstacleRoutine()
     {
 
-        while (obstaclesSpawned < 5)
+        while (true)
         {
+            GameObject obstacleToSpawn = obstaclePrefabs[Random.Range(0, obstaclePrefabs.Length)];
+
+            Vector3 spawnPos = new Vector3(Random.Range(-spawnWidth, spawnWidth), transform.position.y, transform.position.z);
+
             yield return new WaitForSeconds(obstacleSpawnTime);
 
-            Instantiate(obstaclePrefab, transform.position, Quaternion.identity);
-            obstaclesSpawned++;
+            Instantiate(obstacleToSpawn, spawnPos, Random.rotation, obstacleParent);
+            
         }
 
 
