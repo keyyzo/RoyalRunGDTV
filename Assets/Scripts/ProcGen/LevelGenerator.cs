@@ -6,6 +6,7 @@ public class LevelGenerator : MonoBehaviour
     [Header("References")]
 
     [SerializeField] CameraController cameraController;
+    [SerializeField] ScoreManager scoreManager;
 
     [Space(10)]
 
@@ -88,9 +89,11 @@ public class LevelGenerator : MonoBehaviour
 
         Vector3 newPosition = new Vector3(transform.position.x, transform.position.y, newSpawnZPosition);
 
-        GameObject newChunk = Instantiate(chunkPrefab, newPosition, Quaternion.identity, chunkParent);
+        GameObject newChunkGO = Instantiate(chunkPrefab, newPosition, Quaternion.identity, chunkParent);
 
-        chunks.Add(newChunk);
+        chunks.Add(newChunkGO);
+        Chunk newChunk = newChunkGO.GetComponent<Chunk>();
+        newChunk.Init(this, scoreManager);
     }
 
     float GenerateSpawnZPosition()
