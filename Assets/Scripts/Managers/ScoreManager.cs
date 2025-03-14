@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class ScoreManager : MonoBehaviour
 {
+    [SerializeField] GameManager gameManager;
     [SerializeField] TMP_Text scoreText;
 
     
@@ -27,7 +28,10 @@ public class ScoreManager : MonoBehaviour
     }
 
     public void IncreaseScore(int scoreAmount)
-    { 
+    {
+        if (gameManager.IsGameOver)
+            return;
+        
         score += scoreAmount;
 
         scoreText.text = "Score: " + score.ToString();
