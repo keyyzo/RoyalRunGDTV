@@ -12,7 +12,8 @@ public class LevelGenerator : MonoBehaviour
 
     [Header("Chunk Variables")]
 
-    [SerializeField] GameObject chunkPrefab;
+    [SerializeField] GameObject[] chunkPrefabs;
+    [SerializeField] GameObject checkpointChunkPrefab;
 
     [Tooltip("The amount of chunks we start with")]
     [SerializeField] int startingChunksAmount = 12; 
@@ -20,7 +21,9 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] Transform chunkParent;
 
     [Tooltip("Do not change chunk length value unless chunk prefab size reflects change")]
-    [SerializeField] float chunkLength = 10f; 
+    [SerializeField] float chunkLength = 10f;
+
+    [SerializeField] int checkpointChunkSpawnInterval = 8;
 
     [Space(10)]
 
@@ -40,6 +43,7 @@ public class LevelGenerator : MonoBehaviour
 
 
     List<GameObject> chunks = new List<GameObject>();
+    int chunksSpawned = 0;
 
     private void Start()
     {
@@ -87,13 +91,36 @@ public class LevelGenerator : MonoBehaviour
     {
         float newSpawnZPosition = GenerateSpawnZPosition();
 
+
+
         Vector3 newPosition = new Vector3(transform.position.x, transform.position.y, newSpawnZPosition);
 
-        GameObject newChunkGO = Instantiate(chunkPrefab, newPosition, Quaternion.identity, chunkParent);
+        GameObject chunkToSpawn = ChooseChunkToSpawn();
+
+        GameObject newChunkGO = Instantiate(chunkToSpawn, newPosition, Quaternion.identity, chunkParent);
 
         chunks.Add(newChunkGO);
         Chunk newChunk = newChunkGO.GetComponent<Chunk>();
         newChunk.Init(this, scoreManager);
+
+        chunksSpawned++;
+    }
+
+    private GameObject ChooseChunkToSpawn()
+    {
+        GameObject chunkToSpawn;
+
+        if (chunksSpawned % checkpointChunkSpawnInterval == 0 && chunksSpawned != 0)
+        {
+            chunkToSpawn = checkpointChunkPrefab;
+        }
+
+        else
+        {
+            chunkToSpawn = chunkPrefabs[Random.Range(0, chunkPrefabs.Length)];
+        }
+
+        return chunkToSpawn;
     }
 
     float GenerateSpawnZPosition()
